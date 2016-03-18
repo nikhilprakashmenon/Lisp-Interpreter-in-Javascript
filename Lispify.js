@@ -1,7 +1,7 @@
 /*
 	AUTHOR : Nikhil Prakash
 	PROGRAM : LISP (SCHEME) INTERPRETER
-	VERSION : 1.1
+	VERSION : 1.0
 	COMMENT : Parses the lisp program and produces syntax tree for basic functions
 
 
