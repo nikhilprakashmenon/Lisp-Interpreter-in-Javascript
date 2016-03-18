@@ -106,6 +106,7 @@ function Lispify(program){
 			parseE();								// Primary function for checking the syntax and parsing the 
 													// contents between ( )
 			ch = next();
+
 			if(same(')' , ch) && !globalVar.errorFlag){
 				
 				ch = next();						// Checking whether the input is a whole program
@@ -194,10 +195,17 @@ function Lispify(program){
 							var lambdaTree = [];
 							lambdaTree.push(parseLambda());
 							parseTree = parseTree.concat(lambdaTree);
+
+							ch = next();
+							if(same(')' , ch))
+								return;
+							else
+								errorHandler("Missing ')' within define body");
 						}
 					}
-				}	
-
+					else
+						errorHandler("Invalid 'define' body syntax");
+				}
 			}
 		}
 
@@ -325,7 +333,7 @@ function Lispify(program){
 			}
 			else{
 				debuggy("parameter is: " + symbol);
-				procedureTree.push(symbol);
+				procedureTree.push(symbol);									// Push the passed identifier into the local tree
 			}
 			 
 			procedureTree = procedureTree.concat(parseProcArgs());			//Calling fn to get the arguments part	  
@@ -364,8 +372,9 @@ function Lispify(program){
 			    	ch = next();
 			    	var tempArgs = parseProcedureCall();
 			    	ch = next();
-			    	if(same(')', ch))
+			    	if(same(')', ch)){
 			        	procArgTree.push(tempArgs);
+			    	}
 			      	else
 			        	errorHandler("Missing ) within procedure call"); 			      
 			    }
@@ -390,7 +399,7 @@ function Lispify(program){
 
 			
 		function parseLambda(){											// Lambda Syntax Check
-			//debugger;
+			
 			debuggy("Inside Lambda function");
 			currentOperation = "parseLambda";
 
@@ -456,13 +465,8 @@ function Lispify(program){
 							debuggy("Recursive Lambda Call");
 
 							var tempLambdaTree = parseLambda();
+							localTree.push(tempLambdaTree);
 
-							ch = next();
-							if(same(')' , ch)){
-								localTree.push(tempLambdaTree);
-							}
-							else
-								errorHandler("Missing ) within Recursive lambda call syntax check");	
 						}
 						else{ 												// Function call							
 							debuggy("function call inside lambda body");
@@ -471,7 +475,6 @@ function Lispify(program){
 					}
 					ch = next();
 					if(same(')' , ch)){
-						ch = next();
 						return localTree;
 					}
 					else
@@ -697,44 +700,44 @@ function Lispify(program){
 
 /*
 ==============================================================================================================
-										TEST CASES - INPUT AND OUTPUT
+												TEST CASES 
 ==============================================================================================================
 
 */
 
 
 expressionSyntaxCheck();
-//specialFormCheck();
-//peterNorvigIOCheck();
-//programCheck();
+// specialFormCheck();
+// peterNorvigIOCheck();
+// programCheck();
 
 function specialFormCheck(){
 	
 
-	//callDefine();
-	//callIf();
-	//callQuote();
-	//callProcedure();
+	callDefine();
+	callIf();
+	callQuote();
+	callProcedure();
 
 	function callDefine(){
 		console.log("\nDefine Special Form\n\n")
-		// console.log("Program: " + "(define value 10)");
-		// console.log(Lispify("(define value 10)"));
+		console.log("Program: " + "(define value 10)");
+		console.log(Lispify("(define value 10)"));
 
-		// console.log("\n-----------------------------------------------\n");
+		console.log("\n-----------------------------------------------\n");
 
-		// console.log("Program: " + "(define twice (lambda (a b) (* a b)))");
-		// console.log(Lispify("(define twice (lambda (a b) (* a b)))"));
+		console.log("Program: " + "(define twice (lambda (a b) (* a b)))");
+		console.log(Lispify("(define twice (lambda (a b) (* a b)))"));
 
-		// console.log("\n-----------------------------------------------\n");
+		console.log("\n-----------------------------------------------\n");
 
-		// console.log("Program: " + "(define twice (lambda (a b) (* a (+ 1 2))))");
-		// console.log(Lispify("(define twice (lambda (a b) (* a (+ 1 2))))"));
+		console.log("Program: " + "(define twice (lambda (a b) (* a (+ 1 2))))");
+		console.log(Lispify("(define twice (lambda (a b) (* a (+ 1 2))))"));
 
-		// console.log("\n-----------------------------------------------\n");
+		console.log("\n-----------------------------------------------\n");
 
-		// console.log("Program: " + "(define repeat (lambda (f) (lambda (x) (* 3 2))))");
-		// console.log(Lispify("(define repeat (lambda (f) (lambda (x) (* 3 2))))"));
+		console.log("Program: " + "(define repeat (lambda (f) (lambda (x) (* 3 2))))");
+		console.log(Lispify("(define repeat (lambda (f) (lambda (x) (* 3 2))))"));
 
 		console.log("\n-----------------------------------------------\n");
 
@@ -747,10 +750,10 @@ function specialFormCheck(){
 		console.log("Program: " + "(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))");
 		console.log(Lispify("(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))"));
 
-		// console.log("\n-----------------------------------------------\n");
+		console.log("\n-----------------------------------------------\n");
 
-		// console.log("Program: " + "(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
-		// console.log(Lispify("(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))"));
+		console.log("Program: " + "(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
+		console.log(Lispify("(define fib (lambda (n) (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))"));
 	}
 
 	function callIf(){
