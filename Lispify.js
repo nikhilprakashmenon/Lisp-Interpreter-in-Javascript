@@ -98,25 +98,30 @@ function Lispify(program){
 	var programParseTree = [];
 	var ch;
 	globalVar.errorFlag = false;
-
-	ch = next();									// function 'next' moves the pointer to the next non-space char
+	
+	// Function 'next' moves the pointer to the next non-space char
+	ch = next();									
 	while(true){		
 
 		if(same('(' , ch)){
-			parseE();								// Primary function for checking the syntax and parsing the 
-													// contents between ( )
+
+			// Primary function for checking the syntax and parsing the contents between ( )
+			parseE();								
 			ch = next();
 
 			if(same(')' , ch) && !globalVar.errorFlag){
-				
-				ch = next();						// Checking whether the input is a whole program
+
+				// Checking whether the input is a whole program
+				ch = next();						
 				if(ch != '('){
 					if(programParseTree.length != 0) 
 						programParseTree.push(parseTree);
 					break;
 				}	
-				programParseTree.push(parseTree);	// Pushing the parsed expression to outer array
-				parseTree = [];						// Re-initializing parseTree to empty array
+				// Pushing the parsed expression to outer array
+				programParseTree.push(parseTree);	
+				// Re-initializing parseTree to empty array
+				parseTree = [];						
 				debuggy("Successfully Parsed");
 			}
 			else{
@@ -130,63 +135,70 @@ function Lispify(program){
 		}
 	}
 
-													// returning the parsed Syntax tree (AST)
+	// returning the parsed Syntax tree (AST)
 	return  (programParseTree === undefined || programParseTree.length == 0) ? parseTree : programParseTree;
 
-	
-	function parseE(){								// Main Syntax Checker Function for Lispify
+	// Main Syntax Checker Function for Lispify
+	function parseE(){								
 		ch = next();		
 		var type = operationSelector(ch);
 		var currentOperation;
 
-
-		if(ch == '('){								// Second opening paranthesis denotes procedure call
+		// Second opening paranthesis denotes procedure call
+		if(ch == '('){								
 			parseProcedure();
 		}
-													// An expressionSyntax
+		// An expressionSyntax
 		else if(type == "operator"){	
 			currentOperation = "expression";
 			parseTree = parseTree.concat(parseExpression());
 		}
-													// A Function Call or a Special Form expressionSyntax
+		// A Function Call or a Special Form expressionSyntax
 		else if(type == "identifier"){
 
 			if(symbol = isIdentifier(ch)){
 
 				var regexOperation = /parse.*\(/;
 			
-				
-				var fnToCall = specialOperSelector(symbol);	//Decide the function to call
+				//Decide the function to call
+				var fnToCall = specialOperSelector(symbol);	
 
-															//Setting currentOperation to the function to be called
+				//Setting currentOperation to the function to be called
 				var matched = String(fnToCall).match(regexOperation).join();
 				currentOperation = matched.substring(0,matched.length-1);
-
-				if(currentOperation == "parseProcedure"){	// If its a procedure call
-					fnToCall(symbol);						// Need to pass the symbol to parseProcedure			
+				
+				// If its a procedure call
+				if(currentOperation == "parseProcedure"){
+					// Need to pass the symbol to parseProcedure	
+					fnToCall(symbol);									
 				}	
-				else{										// Otherwise
-					parseTree.push(symbol);					// Pushing symbol into parse tree		 
-					fnToCall();								//Calling the respective function
+				else{
+					// Pushing symbol into parse tree		 										
+					parseTree.push(symbol);					
+					//Calling the respective function
+					fnToCall();								
 				}			
 				
 			}
 		}
 
-		
-		function parseDefine(){								// Special Form Check - "define"
+		// Special Form Check - "define"
+		function parseDefine(){								
 			debuggy("parse define special form");
 
 			ch = next();
-
-			if(identifier = isIdentifier(ch)){				// Valid identifier
-
-				parseTree.push(identifier);					// Pushing identifier into parse tree
+			// Valid identifier
+			if(identifier = isIdentifier(ch)){				
+				// Pushing identifier into parse tree
+				parseTree.push(identifier);					
 				ch = next();
-				if( number = isNumber(ch)){					// If its a number
-					parseTree.push(number); 				// Pushing number into parse tree
+				// If its a number
+				if( number = isNumber(ch)){
+					// Pushing number into parse tree
+					parseTree.push(number); 				
 				}
-				else if( same('(' , ch) ){					// lambda 
+				// lambda
+				else if( same('(' , ch) ){					 
 					ch = next();
 
 					if(ident = isIdentifier(ch)){
@@ -209,17 +221,18 @@ function Lispify(program){
 			}
 		}
 
-
-		
-		function parseIf(){									// Special Form Check - "if"
+		// Special Form Check - "if"
+		function parseIf(){									
 			debuggy("parse If special form");
 			ch = next();
 			
 			if(arguments.length == 0){
-				
-				var testParseResult = parseTestCondForIf(); // Checking the syntax of test condition
+
+				// Checking the syntax of test condition
+				var testParseResult = parseTestCondForIf(); 
 				if(!globalVar.errorFlag){
-					parseTree.push(testParseResult);		// Pushing the parsed test condition to parse tree
+					// Pushing the parsed test condition to parse tree
+					parseTree.push(testParseResult);		
 
 					ch = next();
 					parseTree.push(parseExpression());
@@ -231,14 +244,16 @@ function Lispify(program){
 				else
 					errorHandler("Could not parse IF statement. Invalid testing condition");
 			}
-			else if(arguments.length == 1){					// Has an array as argument - for lambda functions
+			// Has an array as argument - for lambda functions
+			else if(arguments.length == 1){					
 				var localTree = arguments[0];
 
-				
-				var testParseResult = parseTestCondForIf(); // Checking the syntax of test condition
+				// Checking the syntax of test condition
+				var testParseResult = parseTestCondForIf(); 
 
 				if(!globalVar.errorFlag){
-					localTree.push(testParseResult);		// Pushing the parsed test condition to parse tree
+					// Pushing the parsed test condition to parse tree
+					localTree.push(testParseResult);		
 
 					ch = next();
 					localTree.push(parseExpression());
@@ -251,27 +266,27 @@ function Lispify(program){
 			}
 		}
 
-		
-		function parseTestCondForIf(){									// Checking syntax of test condition for IF 
+		// Checking syntax of test condition for IF 
+		function parseTestCondForIf(){									
 																		
 			debuggy("Checking syntax of test for IF Special form");
 
 			var testTree = [];
 
-			if(same('(' , ch)){											// Checking test condition first followed by 
-																		//two expressions
+			if(same('(' , ch)){
+				// Checking test condition first followed by two expressions	
 				ch = next();
 
-				if(operationSelector(ch) == "condOperator"){			// Test Syntax - an operator followed by 
-																		//two expressions
-					
+				if(operationSelector(ch) == "condOperator"){			
+					// Test Syntax - an operator followed by two expressions
 					debuggy("Conditional Operator: " + ch);
-
-					testTree.push(ch); 									//Pushing the conditional operator first
+					
+					//Pushing the conditional operator first
+					testTree.push(ch); 									
 
 					for(var i=1; i<=2;i++){
-					
-						ch = next(); 									//Incrementing pointer
+						//Incrementing pointer
+						ch = next(); 									
 
 						if(num = isNumber(ch))
 							testTree.push(num);
@@ -297,21 +312,21 @@ function Lispify(program){
 				errorHandler("Missing ( in test condition for IF statement");
 		}
 
-		
+		// Special Form Check - "Quote"
 		function parseQuote(){
 			debuggy("parse quote special form");
 
 			ch = next();
-			parseTree.push(parseExpression());									// Special Form Check - "Quote"
+			parseTree.push(parseExpression());									
 		}
 
-		
-		function parseSet(){									  // Special Form Check - "set!"
+		// Special Form Check - "set!"
+		function parseSet(){									  
 			debuggy("parse set special form");
 		}
 
-		
-		function parseBegin(){									 // Special Form Check - "begine"
+		// Special Form Check - "begine"
+		function parseBegin(){									 
 			debuggy("parse begin special form");
 		}
 
@@ -322,21 +337,24 @@ function Lispify(program){
 		function parseProcedureCall(symbol){
     
 			var procedureTree = [];
-
-			if(operationSelector(ch) == "operator"){				// If the argument of the func is an expression
+			
+			// If the argument of the func is an expression
+			if(operationSelector(ch) == "operator"){				
 				procedureTree = procedureTree.concat(parseExpression());
 			}
 
 			if(typeof(symbol) === 'undefined'){
 				debuggy("parameter is undefined");
-				procedureTree = procedureTree.concat(parseProcIdentifier()); //Calling fn to get the identifier part
+				//Calling fn to get the identifier part
+				procedureTree = procedureTree.concat(parseProcIdentifier()); 
 			}
 			else{
 				debuggy("parameter is: " + symbol);
-				procedureTree.push(symbol);									// Push the passed identifier into the local tree
+				// Push the passed identifier into the local tree
+				procedureTree.push(symbol);									
 			}
-			 
-			procedureTree = procedureTree.concat(parseProcArgs());			//Calling fn to get the arguments part	  
+			//Calling fn to get the arguments part	  
+			procedureTree = procedureTree.concat(parseProcArgs());			
 			return procedureTree;
 		}
 
@@ -382,8 +400,8 @@ function Lispify(program){
 			    else if(number = isNumber(ch)){
 			    	procArgTree.push(number);
 			    }
-
-			    else if(ch == "0"){										// IF the number is 0 - special case
+				// IF the number is 0 - special case
+			    else if(ch == "0"){										
 			    	procArgTree.push(0);
 			    }
 
@@ -397,30 +415,33 @@ function Lispify(program){
 		    return procArgTree;
 		}
 
-			
-		function parseLambda(){											// Lambda Syntax Check
+		// Lambda Syntax Check
+		function parseLambda(){											
 			
 			debuggy("Inside Lambda function");
 			currentOperation = "parseLambda";
+			
+			//creating an empty list
+			var tree=[];					
 
-			var tree=[];												//creating an empty list
-			tree.push("lambda");										// pushing lamnda keyword first
+			// pushing lamnda keyword first
+			tree.push("lambda");										
 			return lambdaSyntax(tree);
 		}
 
-		
-		function lambdaSyntax(localTree){								// Lambda Syntax Check - Main body
+		// Lambda Syntax Check - Main body
+		function lambdaSyntax(localTree){								
 
 			
-			(function parametersCheck(){								// Function to check syntax of 
-																		//lambda parameters
-
+			(function parametersCheck(){								
+				// Function to check syntax of lambda parameters
 				ch = next();
 				if(same('(' , ch)){	
 					var paramTree = [];
 					var arg;
 					ch = next();
-					while(!(/\)/.test(ch))){							// repeat until we encounter closing bracket
+					// repeat until we encounter closing bracket
+					while(!(/\)/.test(ch))){										
 			
 						if(arg = isIdentifier(ch)){
 							paramTree.push(arg);
@@ -441,19 +462,22 @@ function Lispify(program){
 
 			})();
 
-			if(!globalVar.errorFlag){										// If the lambda argument syntax is 
-																			//valid check the definition
+			if(!globalVar.errorFlag){
+				// If the lambda argument syntax is valid check the definition										
 				debuggy("Valid lambda parameters");
 
 				ch = next();
 				if(same('(' , ch)){
 					ch = next();
-					if(operationSelector(ch) == "operator"){				// expressionSyntax
+					// expressionSyntax
+					if(operationSelector(ch) == "operator"){				
 						localTree.push(parseExpression());
 					}
-					else{													// If statement or lambda statement
+					else{													
+						// If statement or lambda statement
 						var symbol = symbolParser(ch);
-						if(symbol == "if" || symbol == "IF"){				// if statement
+						// if statement
+						if(symbol == "if" || symbol == "IF"){				
 							debuggy("If special form - inside lambda");
 
 							var tempIfTree = [];
@@ -461,14 +485,16 @@ function Lispify(program){
 							tempIfTree.push(symbol);
 							localTree.push(parseIf(tempIfTree));
 						}
-						else if(symbol == "lambda" || symbol == "lambda"){	// Recursive lambda statement
+						// Recursive lambda statement
+						else if(symbol == "lambda" || symbol == "lambda"){	
 							debuggy("Recursive Lambda Call");
 
 							var tempLambdaTree = parseLambda();
 							localTree.push(tempLambdaTree);
 
 						}
-						else{ 												// Function call							
+						// Function call							
+						else{ 												
 							debuggy("function call inside lambda body");
 							localTree.push(parseProcedureCall(symbol));
 						}
@@ -490,15 +516,15 @@ function Lispify(program){
 		}
 
 
-		
-		function parseExpression(){											// Expression Syntax Check 
+		// Expression Syntax Check 
+		function parseExpression(){			
 			
-			
-			if(ch == '('){													// An expression can also be enclosed 
-																			//within brackets
+			if(ch == '('){
+				// An expression can also be enclosed within brackets
 				ch = next();
 				var parsedExp = parseExpression();
-				if(!globalVar.errorFlag){									//	if the expression syntax is valid
+				//	if the expression syntax is valid
+				if(!globalVar.errorFlag){									
 					ch = next();
 					if(same(')' , ch))
 						return parsedExp;
@@ -507,27 +533,29 @@ function Lispify(program){
 				}
 			}
 						
-			else if(operationSelector(ch) == "operator" && !globalVar.errorFlag){	// An expression begins with 
-																				 	//an binary oper (+ , - , * , /)
+			else if(operationSelector(ch) == "operator" && !globalVar.errorFlag){
+				// An expression begins with an binary oper (+ , - , * , /)	
 				var tree = [];
-				tree.push(ch);													 	// Pushing the operator first
-				return expressionSyntax(tree); 										// Checking Syntax for expression
+				// Pushing the operator first
+				tree.push(ch);													 	
+				// Checking Syntax for expression
+				return expressionSyntax(tree); 										
 			}
-			
-			else if(number = isNumber(ch)){											// An expression can be a number
+			// An expression can be a number
+			else if(number = isNumber(ch)){											
 				return number;
 			}
 
 			else if(ident = isIdentifier(ch)){
-				
-				if(currentOperation == "parseLambda"){								// Procedure call if lambda fnc
+				// Procedure call if lambda fnc
+				if(currentOperation == "parseLambda"){								
 					return parseProcedureCall(ident);
 				}
+				// else return identifier
 				else
-					return ident;													// else return identifier
+					return ident;													
 			}
-			
-			else{																	// Error parsing
+			else{																	
 				if(currentOperation == "parseLambda"){
 					return null;
 				}
@@ -536,8 +564,8 @@ function Lispify(program){
 			}
 		}
 
-		
-		function expressionSyntax(localTree){									// Expression Syntax Check - Main Body
+		// Expression Syntax Check - Main Body
+		function expressionSyntax(localTree){									
 			
 			for(var i=1; i<=2; i++){
 				
@@ -546,8 +574,8 @@ function Lispify(program){
 
 				if(ch == '('){
 					ch = next();
-					
-					var tempParseTree = parseExpression();					// Recursive call of expressionSyntax
+					// Recursive call of expressionSyntax
+					var tempParseTree = parseExpression();					
 
 					ch = next();
 					if(same(')' , ch)){
@@ -557,14 +585,13 @@ function Lispify(program){
 						errorHandler("Missing )");					
 				}
 
-				
-				else if(num = isNumber(ch)){								//Number
+				//Number
+				else if(num = isNumber(ch)){								
 					localTree.push(num);
 				}
 
-				
-				else{														//Symbol or error
-
+				//Symbol or error
+				else{														
 					if(ident = isIdentifier(ch)){
 						localTree.push(ident);
 					}
@@ -576,8 +603,7 @@ function Lispify(program){
 			return localTree;
 		}
 
-	
-		
+		// returns the function to be called
 		function specialOperSelector(string){
 			switch(string){
 				case "if":
@@ -591,15 +617,14 @@ function Lispify(program){
 				case "begin":
 				case "BEGIN":return parseBegin;
 				default: return parseProcedure;
-			}							// returns the function to be called
+			}							
 		};
 
-		
-		function operationSelector(char){							     // Checking whether an expr, lambda, procedure  
+		 // Checking whether an expr, lambda, procedure  
+		function operationSelector(char){							    
 																		 
-			debuggy("Testing: " + char);
-
-			index++;													// To handle conditional operators  <= | >=
+			// To handle conditional operators  <= | >=
+			index++;													
 			var tempChar = char;
 			tempChar += program.charAt(index);
 
@@ -621,10 +646,10 @@ function Lispify(program){
 				case '=':return "condOperator";
 				default: break;
 			}
-
-			if(/^lambda$/.test(char))										//lambda function
+			//lambda function
+			if(/^lambda$/.test(char))										
 				return "lambda";
-			else if(/^[a-zA-Z]$/.test(char))								//Everything else
+			else if(/^[a-zA-Z]$/.test(char))								
 				return "identifier";
 		}
 
@@ -657,11 +682,12 @@ function Lispify(program){
 				return false;
 		}
 	}
-
-	function symbolParser(currentCharacter){						// Parses Symbols - identifiers/ keywords
+	// Parses Symbols - identifiers/ keywords
+	function symbolParser(currentCharacter){						
 		var symbol = '';
-		var regex = /^[a-zA-Z]+[_a-zA-Z0-9-]*$/g; 					// Only identifies characters followeds by 
-																	// chars, _ , digits, -
+		// Only identifies characters followeds by chars, _ , digits, -
+		var regex = /^[a-zA-Z]+[_a-zA-Z0-9-]*$/g; 					
+																	
 		var currChar = currentCharacter;
 		while(!(/[\s\)]/.test(currChar))){
 			symbol += currChar;
@@ -672,7 +698,7 @@ function Lispify(program){
 
 		return (regex.test(symbol)) ? symbol : "invalidIdentifier";
 	}
- 
+ 	// Number parser
 	function numberParser(currentNumber){
 		var number = '';
 		var currNumber = currentNumber;
@@ -683,12 +709,12 @@ function Lispify(program){
 		}
 		index--;
 
-		return Number(number);						   // Number parser
+		return Number(number);						   
 	}
-
-	function next(){												 // Points to next non-whitespace character
-		index++;													 // Incrementing index first to point to next 
-																	 //character
+ 	// Points to next non-whitespace character
+	function next(){												
+		index++;
+		// Incrementing index first to point to next character
 		var currChar = program.charAt(index);
 		while(/\s/g.test(currChar)){
 			index++;
@@ -700,9 +726,8 @@ function Lispify(program){
 
 /*
 ==============================================================================================================
-										MODULE EXPORT FOR TEST FILE 
+												MODULE EXPORT 
 ==============================================================================================================
-
 */
 
 module.exports = {

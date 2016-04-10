@@ -3,10 +3,24 @@ var lispInterpreter = require('./Lispify');
 var globalVar = lispInterpreter.globalVar;
 var Lispify = lispInterpreter.Lispify;
 
+/*
+==============================================================================================================
+										 TESTS FOR PARSING LISP STATEMENTS
+==============================================================================================================
+*/
+
 expressionSyntaxCheck();
 specialFormCheck();
 peterNorvigIOCheck();
 programCheck();
+
+/*
+==============================================================================================================
+										 TESTS FOR INTERPRETING LISP STATEMENTS
+==============================================================================================================
+*/
+
+
 
 function specialFormCheck(){
 	
@@ -232,4 +246,5 @@ function programCheck(){
 	// console.log("Program: " + "(circle-area 3)");
 	// console.log(Lispify("(circle-area 3)"));
 }
+
 
