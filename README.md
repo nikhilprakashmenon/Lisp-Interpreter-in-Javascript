@@ -1,7 +1,6 @@
 # Lisp-Interpreter-in-Javascript
-Version: 1.0
 
-A lisp interpreter implemented in Javascript. 
+### A lisp interpreter implemented in Javascript. 
 
 Two step interpreter:-
   1. Tokenization and Parsing
@@ -20,7 +19,7 @@ Two step interpreter:-
   			|<BEGIN>
   			|<PROCEDURE_CALL>
   
-  	
+  	-------------------------------------------------------
   	<EXPRESSION> ::= < OP <EXPRESSION> <EXPRESSION> >
   					| "(" <EXPRESSION> ")"
   					| <NUMBER>
@@ -30,27 +29,27 @@ Two step interpreter:-
   	<NUMBER> ::= <DIGIT> { <DIGIT> }*
   	<ALPHABET> ::= A | B | C ... | Z | a | b | ... | z
   	<DIGIT> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  	
+  	-------------------------------------------------------
   
   	<IF> ::= "if" <TEST> <T> <T>
   	<TEST> ::= "(" <CONDOP> <EXPRESSION> <EXPRESSION> ")"
   	<CONDOP> ::= "<" | ">" | "<=" | ">=" | "="
   	<T> ::= <EXPRESSION> | <LAMBDACALL>
-  	
+  	-------------------------------------------------------
   
   	<DEFINE> ::= "define" <IDENTIFIER> ( <LAMBDACALL> | "car" | "cdr" )
   	<LAMBDACALL> ::= "lambda" "(" <IDENTIFIER> { <IDENTIFIER> }* ")" "(" <T> | <IF> ")"
   				   | "(" <LAMBDACALL> ")"
-  	
+  	-------------------------------------------------------
   
   	<SET> ::= 'set!' <IDENTIFIER> <T>
-  	
+  	-------------------------------------------------------
   
   	<QUOTE> ::= "quote" <T>
-  	
+  	-------------------------------------------------------
   
   	<BEGIN> ::= "begin" <LISPIFY> { <LISPIFY> }*
-  	
+  	-------------------------------------------------------
   
   	<PROCEDURE_CALL> ::= <IDENTS> { <ARGUMENTS> }+	
   			           | "(" <PROCEDURE_CALL> ")"
@@ -63,7 +62,7 @@ Two step interpreter:-
   	              | <NUMBER>
 ```
 
->To test: $ nodejs test.js
+>To test: $ nodejs test.js <br><br>
 >To start a repl: $ nodejs repl.js
 
 Reference: [How to Write a (Lisp) Interpreter (in Python)) - By Peter Norvig](http://norvig.com/lispy.html)
