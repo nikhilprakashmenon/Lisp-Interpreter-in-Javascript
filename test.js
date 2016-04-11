@@ -48,7 +48,9 @@ var Lispify   = lispInterpreter.Lispify;
 // console.log(Parse("(quote (+ 1 2))"));
 // var ast = Parse("(quote (+ 1 2))");
 // console.log(Evaluate(ast));
-
+// =============================================
+// LAMBDA FUNCTIONS
+console.log(JSON.stringify(Parse('(define circle-area (lambda (r1 r2) (* pi (* r r))))'),null));
 /*
 ==============================================================================================================
 										 	  PARSING - TEST FUNCTIONS

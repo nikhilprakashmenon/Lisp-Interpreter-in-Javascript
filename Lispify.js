@@ -747,7 +747,12 @@ function Evaluate(currVal, env) {
 		return currVal[1];
 	}
 
-	else { // (proc args...)		
+	// (lambda (var..) exp)
+	else if(currVal[0] === 'lambda') {
+	}
+
+	// (proc args...)
+	else { 
 		var proc = Evaluate(currVal[0]);
 		var args = [];
 		for (var i = 1; i < currVal.length; i++) {
