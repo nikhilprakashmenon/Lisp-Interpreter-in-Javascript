@@ -6,10 +6,10 @@ A lisp interpreter implemented in Javascript.
 Two step interpreter:-
   1. Tokenization and Parsing
   
-  Syntax used for Parsing:-
-  
+    Lisp Syntax used during Parsing:-
+```
     GRAMMAR (BNF - Backus Naur Form)
-  	================================
+    -------------------------------
   
   	<LISPIFY> ::= "(" <E> ")"
   	<E> ::=  <EXPRESSION>
@@ -20,7 +20,7 @@ Two step interpreter:-
   			|<BEGIN>
   			|<PROCEDURE_CALL>
   
-  	-------------------------------------------------------
+  	
   	<EXPRESSION> ::= < OP <EXPRESSION> <EXPRESSION> >
   					| "(" <EXPRESSION> ")"
   					| <NUMBER>
@@ -30,27 +30,27 @@ Two step interpreter:-
   	<NUMBER> ::= <DIGIT> { <DIGIT> }*
   	<ALPHABET> ::= A | B | C ... | Z | a | b | ... | z
   	<DIGIT> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  	-------------------------------------------------------
+  	
   
   	<IF> ::= "if" <TEST> <T> <T>
   	<TEST> ::= "(" <CONDOP> <EXPRESSION> <EXPRESSION> ")"
   	<CONDOP> ::= "<" | ">" | "<=" | ">=" | "="
   	<T> ::= <EXPRESSION> | <LAMBDACALL>
-  	-------------------------------------------------------
+  	
   
   	<DEFINE> ::= "define" <IDENTIFIER> ( <LAMBDACALL> | "car" | "cdr" )
   	<LAMBDACALL> ::= "lambda" "(" <IDENTIFIER> { <IDENTIFIER> }* ")" "(" <T> | <IF> ")"
   				   | "(" <LAMBDACALL> ")"
-  	-------------------------------------------------------
+  	
   
   	<SET> ::= 'set!' <IDENTIFIER> <T>
-  	-------------------------------------------------------
+  	
   
   	<QUOTE> ::= "quote" <T>
-  	-------------------------------------------------------
+  	
   
   	<BEGIN> ::= "begin" <LISPIFY> { <LISPIFY> }*
-  	-------------------------------------------------------
+  	
   
   	<PROCEDURE_CALL> ::= <IDENTS> { <ARGUMENTS> }+	
   			           | "(" <PROCEDURE_CALL> ")"
@@ -61,6 +61,7 @@ Two step interpreter:-
   	<ARGUMENTS> ::= <PROCEDURE_CALL> 
   		          | <IDENTIFIER> 
   	              | <NUMBER>
+```
 
   2. Evaluation
 
