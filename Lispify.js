@@ -74,25 +74,24 @@ function errorHandler(errorMessage){
 	console.log("Invalid Syntax. Error: " + errorMessage);
 };
 
-//Function same checks whether two symbols are the equal
-var same = function(symbol, nextSymb){
-	//debugger;
-	if(symbol == nextSymb){
-		return true;
-	}
-	else
-		errorHandler("Expected symbol: " + symbol + "  But Received: " + nextSymb);
-};
-
 //Function for debugging purpose
 function debuggy(string){
 	if(globalVar.debugFlag)
 		console.log(string);
 }
 
-//Lisp(Scheme) interpreter
-function Lispify(program){
+var global_env = {
 
+	'*': function(args) { return args.reduce(function(result, currVal){ return result * currVal}, 1) },
+	'+': function(args) { return args.reduce(function(result, currVal){ return result + currVal}, 0) },
+	'-': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal - result}, 0) },
+	'/': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal / result}, 1) },
+};
+
+
+function Parse(input) {
+
+	// Initializations 
 	var index = -1;
 	var parseTree = [];
 	var programParseTree = [];
@@ -104,13 +103,11 @@ function Lispify(program){
 	while(true){		
 
 		if(same('(' , ch)){
-
 			// Primary function for checking the syntax and parsing the contents between ( )
 			parseE();								
 			ch = next();
 
 			if(same(')' , ch) && !globalVar.errorFlag){
-
 				// Checking whether the input is a whole program
 				ch = next();						
 				if(ch != '('){
@@ -157,7 +154,6 @@ function Lispify(program){
 		else if(type == "identifier"){
 
 			if(symbol = isIdentifier(ch)){
-
 				var regexOperation = /parse.*\(/;
 			
 				//Decide the function to call
@@ -184,8 +180,7 @@ function Lispify(program){
 
 		// Special Form Check - "define"
 		function parseDefine(){								
-			debuggy("parse define special form");
-
+			
 			ch = next();
 			// Valid identifier
 			if(identifier = isIdentifier(ch)){				
@@ -223,7 +218,6 @@ function Lispify(program){
 
 		// Special Form Check - "if"
 		function parseIf(){									
-			debuggy("parse If special form");
 			ch = next();
 			
 			if(arguments.length == 0){
@@ -269,8 +263,6 @@ function Lispify(program){
 		// Checking syntax of test condition for IF 
 		function parseTestCondForIf(){									
 																		
-			debuggy("Checking syntax of test for IF Special form");
-
 			var testTree = [];
 
 			if(same('(' , ch)){
@@ -314,22 +306,11 @@ function Lispify(program){
 
 		// Special Form Check - "Quote"
 		function parseQuote(){
-			debuggy("parse quote special form");
-
 			ch = next();
 			parseTree.push(parseExpression());									
 		}
 
-		// Special Form Check - "set!"
-		function parseSet(){									  
-			debuggy("parse set special form");
-		}
-
-		// Special Form Check - "begine"
-		function parseBegin(){									 
-			debuggy("parse begin special form");
-		}
-
+		// Parse Procedures
 		function parseProcedure(symbol){
 			parseTree = parseTree.concat(parseProcedureCall(symbol));
 		}	
@@ -349,7 +330,6 @@ function Lispify(program){
 				procedureTree = procedureTree.concat(parseProcIdentifier()); 
 			}
 			else{
-				debuggy("parameter is: " + symbol);
 				// Push the passed identifier into the local tree
 				procedureTree.push(symbol);									
 			}
@@ -418,7 +398,6 @@ function Lispify(program){
 		// Lambda Syntax Check
 		function parseLambda(){											
 			
-			debuggy("Inside Lambda function");
 			currentOperation = "parseLambda";
 			
 			//creating an empty list
@@ -430,8 +409,7 @@ function Lispify(program){
 		}
 
 		// Lambda Syntax Check - Main body
-		function lambdaSyntax(localTree){								
-
+		function lambdaSyntax(localTree){
 			
 			(function parametersCheck(){								
 				// Function to check syntax of lambda parameters
@@ -569,7 +547,6 @@ function Lispify(program){
 			
 			for(var i=1; i<=2; i++){
 				
-				debuggy("expressionSyntax!!")
 				ch = next();
 
 				if(ch == '('){
@@ -626,7 +603,7 @@ function Lispify(program){
 			// To handle conditional operators  <= | >=
 			index++;													
 			var tempChar = char;
-			tempChar += program.charAt(index);
+			tempChar += input.charAt(index);
 
 			switch(tempChar){
 				case '<=':
@@ -657,7 +634,6 @@ function Lispify(program){
 		//											No  -> return false
 		function isNumber(char){
 			if(!(isNaN(char))){
-				debuggy("Calling Number parser");
 				var number = numberParser(ch);
 				return number;
 			}
@@ -692,7 +668,7 @@ function Lispify(program){
 		while(!(/[\s\)]/.test(currChar))){
 			symbol += currChar;
 			index++;			
-			currChar = program.charAt(index);
+			currChar = input.charAt(index);
 		}
 		index--;
 
@@ -701,27 +677,96 @@ function Lispify(program){
  	// Number parser
 	function numberParser(currentNumber){
 		var number = '';
+		var regex = /\./;
 		var currNumber = currentNumber;
-		while( !(/\s/g.test(currNumber)) && !(isNaN(currNumber)) ){
+		while( !(/\s/g.test(currNumber)) 
+			&& 
+			( regex.test(currNumber) || !(isNaN(currNumber))) ){
 			number += currNumber;
 			index++;			
-			currNumber = program.charAt(index);
+			currNumber = input.charAt(index);
 		}
 		index--;
-
-		return Number(number);						   
+		return parseFloat(number);						   
 	}
  	// Points to next non-whitespace character
 	function next(){												
 		index++;
 		// Incrementing index first to point to next character
-		var currChar = program.charAt(index);
+		var currChar = input.charAt(index);
 		while(/\s/g.test(currChar)){
 			index++;
-			currChar = program.charAt(index);
+			currChar = input.charAt(index);
 		}
 		return currChar;
 	}
+
+	//Function same checks whether two symbols are the equal
+	function same(symbol, nextSymb){
+		//debugger;
+		if(symbol == nextSymb){
+			return true;
+		}
+		else
+			errorHandler("Expected symbol: " + symbol + "  But Received: " + nextSymb);
+	}
+}
+
+// Evaluates each expression
+function evaluate(currVal) {
+
+	// Number literal
+	if(typeof currVal === 'number') {
+		return currVal;
+	}
+
+	// Variable reference 
+	else if(typeof currVal === 'string') {
+		return global_env[currVal];
+	}
+
+	// (define var exp)
+	else if(currVal[0] === 'define') {
+		// store the variable value mapping to the environment
+		global_env[currVal[1]] = evaluate(currVal[2]);
+	}
+
+	else { // (proc args...)		
+		var proc = evaluate(currVal[0]);
+		var args = [];
+		for (var i = 1; i < currVal.length; i++) {
+			args.push(evaluate(currVal[i]));
+		}
+		return proc(args);
+	}
+}
+
+
+// console.log(Parse("(* ( + 2 3) 10)"));
+// var ast = Parse("(* ( + 2 3) 10)");;
+// console.log(evaluate(ast));
+// =============================================
+// console.log(Parse("(define r 10)"));
+// var ast = Parse("(define r 10)");
+// console.log(evaluate(ast));
+// console.log(global_env['r']);
+
+// console.log(Parse("(* 3.14 (* r r))"));
+// var ast = Parse("(* 3.14 (* r r))");
+// console.log("result: " + evaluate(ast));
+
+// delete global_env['r'];
+// =============================================
+// console.log(Parse("(define twice (lambda (a b) (* a b)))"));
+
+
+//Lisp(Scheme) interpreter
+function Lispify(program){
+
+	var ast = Parse(program);
+	var output = evaluate(ast);
+
+	return output;
 }
 
 /*
@@ -732,5 +777,6 @@ function Lispify(program){
 
 module.exports = {
 	globalVar: globalVar,
+	Parse: Parse,
 	Lispify: Lispify
 }
