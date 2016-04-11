@@ -3,7 +3,7 @@ Version: 1.0
 
 A list interpreter implemented in Javascript. 
 
->To test: $ node test.js
+>To test: $ nodejs test.js
 
 
 Source:
