@@ -717,6 +717,7 @@ function Parse(input) {
 	}
 }
 
+
 // Evaluates each expression
 function Evaluate(currVal, env) {
 
@@ -735,12 +736,12 @@ function Evaluate(currVal, env) {
 	// (define var exp)
 	else if(currVal[0] === 'define') {
 		// store the variable value mapping to the environment
-		env[currVal[1]] = Evaluate(currVal[2]);
+		env[currVal[1]] = Evaluate(currVal[2], env);
 	}
 
 	// (if test conseq alternate)
 	else if(currVal[0] === 'if') {
-		return (Evaluate(currVal[1])) ? Evaluate(currVal[2]) : Evaluate(currVal[3]);
+		return (Evaluate(currVal[1], env)) ? Evaluate(currVal[2], env) : Evaluate(currVal[3], env);
 	} 
 	// (quote exp)
 	else if(currVal[0] === 'quote') {
@@ -749,14 +750,15 @@ function Evaluate(currVal, env) {
 
 	// (lambda (var..) exp)
 	else if(currVal[0] === 'lambda') {
+		
 	}
 
 	// (proc args...)
 	else { 
-		var proc = Evaluate(currVal[0]);
+		var proc = Evaluate(currVal[0], env);
 		var args = [];
 		for (var i = 1; i < currVal.length; i++) {
-			args.push(Evaluate(currVal[i]));
+			args.push(Evaluate(currVal[i], env));
 		}
 		return proc(args);
 	}
