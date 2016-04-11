@@ -6,7 +6,6 @@ A lisp interpreter implemented in Javascript.
 Two step interpreter:-
   1. Tokenization and Parsing
   
-    Lisp Syntax used during Parsing:-
 ```
     GRAMMAR (BNF - Backus Naur Form)
     -------------------------------
