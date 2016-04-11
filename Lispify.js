@@ -68,18 +68,6 @@ var globalVar = {
 	errorFlag : false,
 };
 
-//Error Handling function
-function errorHandler(errorMessage){
-	globalVar.errorFlag = true;
-	console.log("Invalid Syntax. Error: " + errorMessage);
-};
-
-//Function for debugging purpose
-function debuggy(string){
-	if(globalVar.debugFlag)
-		console.log(string);
-}
-
 var global_env = {
 
 	'*': function(args) { return args.reduce(function(result, currVal)			{ return result * currVal}, 1); },
@@ -93,6 +81,18 @@ var global_env = {
 	'=': function(args) { return (args[0] === args[1]); },
 };
 
+
+//Error Handling function
+function errorHandler(errorMessage){
+	globalVar.errorFlag = true;
+	console.log("Invalid Syntax. Error: " + errorMessage);
+};
+
+//Function for debugging purpose
+function debuggy(string){
+	if(globalVar.debugFlag)
+		console.log(string);
+}
 
 function Parse(input) {
 
@@ -718,7 +718,9 @@ function Parse(input) {
 }
 
 // Evaluates each expression
-function Evaluate(currVal) {
+function Evaluate(currVal, env) {
+
+	env = (typeof env !== 'undefined') ? env : global_env;
 
 	// Number literal
 	if(typeof currVal === 'number') {
@@ -727,13 +729,13 @@ function Evaluate(currVal) {
 
 	// Variable reference 
 	else if(typeof currVal === 'string') {
-		return global_env[currVal];
+		return env[currVal];
 	}
 
 	// (define var exp)
 	else if(currVal[0] === 'define') {
 		// store the variable value mapping to the environment
-		global_env[currVal[1]] = Evaluate(currVal[2]);
+		env[currVal[1]] = Evaluate(currVal[2]);
 	}
 
 	// (if test conseq alternate)
@@ -754,18 +756,6 @@ function Evaluate(currVal) {
 		return proc(args);
 	}
 }
-
-// function repl() {
-// 	// Setting the prompt lispify>
-// 	// repeat until it encounters enter(\n)
-
-// 	var ast;
-
-// 	while(true) {
-// 		ast = Evaluate(Parse(input from prompt));
-// 		if ast 
-// 	}
-// }
 
 
 //Lisp(Scheme) interpreter
