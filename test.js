@@ -1,8 +1,9 @@
 var lispInterpreter = require('./Lispify');
 
 var globalVar = lispInterpreter.globalVar;
-var Parse = lispInterpreter.Parse;
-var Lispify = lispInterpreter.Lispify;
+var Parse     = lispInterpreter.Parse;
+var Evaluate  = lispInterpreter.Evaluate;
+var Lispify   = lispInterpreter.Lispify;
 
 /*
 ==============================================================================================================
@@ -10,7 +11,7 @@ var Lispify = lispInterpreter.Lispify;
 ==============================================================================================================
 */
 
-expressionSyntaxCheck();
+// expressionSyntaxCheck();
 // specialFormCheck();
 // peterNorvigIOCheck();
 // programCheck();
@@ -21,7 +22,32 @@ expressionSyntaxCheck();
 ==============================================================================================================
 */
 
+// EXPRESSIONS
+// console.log(Parse("(* ( + 2 3) (/ 10 2))"));
+// var ast = Parse("(* ( + 2 3) (/ 10 2))");
+// console.log(Evaluate(ast));
+// =============================================
+// DEFINE FORM
+// console.log(Parse("(define r 10)"));
+// var ast = Parse("(define r 10)");
+// console.log(Evaluate(ast));
+// // console.log(global_env['r']);
 
+// console.log(Parse("(* 3.14 (* r r))"));
+// var ast = Parse("(* 3.14 (* r r))");
+// console.log("result: " + Evaluate(ast));
+
+// delete global_env['r'];
+// =============================================
+// IF FORM
+// console.log(Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))"));
+// var ast = Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))");
+// console.log(Evaluate(ast));
+// =============================================
+// QUOTE
+// console.log(Parse("(quote (+ 1 2))"));
+// var ast = Parse("(quote (+ 1 2))");
+// console.log(Evaluate(ast));
 
 /*
 ==============================================================================================================

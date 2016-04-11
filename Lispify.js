@@ -82,14 +82,14 @@ function debuggy(string){
 
 var global_env = {
 
-	'*': function(args) { return args.reduce(function(result, currVal){ return result * currVal}, 1); },
-	'+': function(args) { return args.reduce(function(result, currVal){ return result + currVal}, 0); },
+	'*': function(args) { return args.reduce(function(result, currVal)			{ return result * currVal}, 1); },
+	'+': function(args) { return args.reduce(function(result, currVal)			{ return result + currVal}, 0); },
 	'-': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal - result}, 0); },
 	'/': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal / result}, 1); },
-	'>': function(args) { return (args[0] > args[1]); }, 
-	'<': function(args) { return (args[0] < args[1]); }, 
-	'>=': function(args) { return (args[0] >= args[1]); }, 
-	'<=': function(args) { return (args[0] <= args[1]); },
+	'>': function(args) { return (args[0]  >  args[1]); }, 
+	'<': function(args) { return (args[0]  <  args[1]); }, 
+	'>=':function(args) { return (args[0] >=  args[1]); }, 
+	'<=':function(args) { return (args[0] <=  args[1]); },
 	'=': function(args) { return (args[0] === args[1]); },
 };
 
@@ -718,7 +718,7 @@ function Parse(input) {
 }
 
 // Evaluates each expression
-function evaluate(currVal) {
+function Evaluate(currVal) {
 
 	// Number literal
 	if(typeof currVal === 'number') {
@@ -733,12 +733,12 @@ function evaluate(currVal) {
 	// (define var exp)
 	else if(currVal[0] === 'define') {
 		// store the variable value mapping to the environment
-		global_env[currVal[1]] = evaluate(currVal[2]);
+		global_env[currVal[1]] = Evaluate(currVal[2]);
 	}
 
 	// (if test conseq alternate)
 	else if(currVal[0] === 'if') {
-		return (evaluate(currVal[1])) ? evaluate(currVal[2]) : evaluate(currVal[3]);
+		return (Evaluate(currVal[1])) ? Evaluate(currVal[2]) : Evaluate(currVal[3]);
 	} 
 	// (quote exp)
 	else if(currVal[0] === 'quote') {
@@ -746,47 +746,33 @@ function evaluate(currVal) {
 	}
 
 	else { // (proc args...)		
-		var proc = evaluate(currVal[0]);
+		var proc = Evaluate(currVal[0]);
 		var args = [];
 		for (var i = 1; i < currVal.length; i++) {
-			args.push(evaluate(currVal[i]));
+			args.push(Evaluate(currVal[i]));
 		}
 		return proc(args);
 	}
 }
 
-// EXPRESSIONS
-// console.log(Parse("(* ( + 2 3) (/ 10 2))"));
-// var ast = Parse("(* ( + 2 3) (/ 10 2))");
-// console.log(evaluate(ast));
-// =============================================
-// DEFINE FORM
-// console.log(Parse("(define r 10)"));
-// var ast = Parse("(define r 10)");
-// console.log(evaluate(ast));
-// console.log(global_env['r']);
+// function repl() {
+// 	// Setting the prompt lispify>
+// 	// repeat until it encounters enter(\n)
 
-// console.log(Parse("(* 3.14 (* r r))"));
-// var ast = Parse("(* 3.14 (* r r))");
-// console.log("result: " + evaluate(ast));
+// 	var ast;
 
-// delete global_env['r'];
-// =============================================
-// IF FORM
-// console.log(Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))"));
-// var ast = Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))");
-// console.log(evaluate(ast));
-// =============================================
-// QUOTE
-// console.log(Parse("(quote (+ 1 2))"));
-// var ast = Parse("(quote (+ 1 2))");
-// console.log(evaluate(ast));
+// 	while(true) {
+// 		ast = Evaluate(Parse(input from prompt));
+// 		if ast 
+// 	}
+// }
+
 
 //Lisp(Scheme) interpreter
 function Lispify(program){
 
 	var ast = Parse(program);
-	var output = evaluate(ast);
+	var output = Evaluate(ast);
 
 	return output;
 }
@@ -800,5 +786,6 @@ function Lispify(program){
 module.exports = {
 	globalVar: globalVar,
 	Parse: Parse,
+	Evaluate:Evaluate,
 	Lispify: Lispify
 }
