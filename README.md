@@ -5,6 +5,7 @@ A lisp interpreter implemented in Javascript.
 
 Two step interpreter:-
   1. Tokenization and Parsing
+  2. Evaluation
   
 ```
     GRAMMAR (BNF - Backus Naur Form)
@@ -62,9 +63,7 @@ Two step interpreter:-
   	              | <NUMBER>
 ```
 
-  2. Evaluation
-
-
 >To test: $ nodejs test.js
+>To start a repl: $ nodejs repl.js
 
 Reference: [How to Write a (Lisp) Interpreter (in Python)) - By Peter Norvig](http://norvig.com/lispy.html)
