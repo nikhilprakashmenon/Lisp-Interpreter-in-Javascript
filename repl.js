@@ -1,9 +1,29 @@
 var repl = require('repl');
 
+// Default evaluator for Lisp expressions
+var defaultEvaluator = function(cmd, context, filename, callback) {
+	var result = Lispify(String(cmd));
+	callback(null, result);
+};
+
+// Start REPL server with the given prompt
 var replServer = repl.start({
-	
+
 	prompt: "lispify > ",
+	eval: defaultEvaluator
 });
+
+// App specific module
+var lispInterpreter = require('./Lispify');
+
+var Parse     = lispInterpreter.Parse;
+var Evaluate  = lispInterpreter.Evaluate;
+var Lispify   = lispInterpreter.Lispify;
+
+// Attaching module to REPL context
+replServer.context.Parse = Parse;
+replServer.context.Evaluate = Evaluate;
+replServer.context.Lispify = Lispify;
 
 //The command is invoked by typing .about. Displays an info about lispify program
 replServer.defineCommand('about', {
@@ -25,21 +45,14 @@ replServer.defineCommand('commands', {
 	}
 });
 
-// On exit -  Ctrl + d
+// On exit -  Ctrl + d / .exit
 replServer.on('exit', function(){
 	console.log('Exiting from repl for Lispify!\n');
 	process.exit();
 });
 
-// App specific module
-var lispInterpreter = require('./Lispify');
 
-var Parse     = lispInterpreter.Parse;
-var Evaluate  = lispInterpreter.Evaluate;
-var Lispify   = lispInterpreter.Lispify;
 
-// Attaching module to REPL context
-replServer.context.Parse = Parse;
-replServer.context.Evaluate = Evaluate;
-replServer.context.Lispify = Lispify;
+
+
 
