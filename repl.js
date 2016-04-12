@@ -8,7 +8,6 @@ var defaultEvaluator = function(cmd, context, filename, callback) {
 
 // Start REPL server with the given prompt
 var replServer = repl.start({
-
 	prompt: "lispify > ",
 	eval: defaultEvaluator
 });

@@ -5,16 +5,17 @@ var Parse     = lispInterpreter.Parse;
 var Evaluate  = lispInterpreter.Evaluate;
 var Lispify   = lispInterpreter.Lispify;
 
+
 /*
 ==============================================================================================================
-										 TESTS FOR PARSING LISP STATEMENTS
+										  TESTS FOR PARSING LISP STATEMENTS
 ==============================================================================================================
 */
 
-// expressionSyntaxCheck();
-// specialFormCheck();
-// peterNorvigIOCheck();
-// programCheck();
+expressionSyntaxCheck();
+specialFormCheck();
+peterNorvigIOCheck();
+programCheck();
 
 /*
 ==============================================================================================================
@@ -22,35 +23,12 @@ var Lispify   = lispInterpreter.Lispify;
 ==============================================================================================================
 */
 
-// EXPRESSIONS
-// console.log(Parse("(* ( + 2 3) (/ 10 2))"));
-// var ast = Parse("(* ( + 2 3) (/ 10 2))");
-// console.log(Evaluate(ast));
-// =============================================
-// DEFINE FORM
-// console.log(Parse("(define r 10)"));
-// var ast = Parse("(define r 10)");
-// console.log(Evaluate(ast));
-// // console.log(global_env['r']);
+interpretArithmetic();
+interpretDefine();
+interpretIf();
+interpretQuote();
+interpretLambda();
 
-// console.log(Parse("(* 3.14 (* r r))"));
-// var ast = Parse("(* 3.14 (* r r))");
-// console.log("result: " + Evaluate(ast));
-
-// delete global_env['r'];
-// =============================================
-// IF FORM
-// console.log(Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))"));
-// var ast = Parse("(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))");
-// console.log(Evaluate(ast));
-// =============================================
-// QUOTE
-// console.log(Parse("(quote (+ 1 2))"));
-// var ast = Parse("(quote (+ 1 2))");
-// console.log(Evaluate(ast));
-// =============================================
-// LAMBDA FUNCTIONS
-console.log(JSON.stringify(Parse('(define circle-area (lambda (r1 r2) (* pi (* r r))))'),null));
 /*
 ==============================================================================================================
 										 	  PARSING - TEST FUNCTIONS
@@ -287,3 +265,79 @@ function programCheck(){
 										 INTERPRETING - TEST FUNCTIONS
 ==============================================================================================================
 */
+
+function interpretArithmetic() {
+
+	console.log("\n\t INTERPRETING ARITHMETIC EXPRESSIONS \n");
+
+	var input = "(* ( + 2 3) (/ 10 (+ 1 1)))";
+
+	console.log("Input: " + input);
+	console.log("Output: " + Lispify(input));
+
+	console.log("=======================================================\n");
+}
+
+function interpretDefine() {
+
+	console.log("\n\t INTERPRETING DEFINE EXPRESSIONS \n");
+
+	var input1 = "(define value 10)";
+	var input2 = "(+ value 50)"
+
+	console.log("Input1: " + input1);
+	console.log("Input2: " + input2);
+	Lispify(input1);
+	console.log("Output: " + Lispify(input2));
+
+	console.log("=======================================================\n");
+}
+
+
+
+function interpretIf() {
+
+	console.log("\n\t INTERPRETING IF EXPRESSIONS \n");
+
+	var input1 = "(if (= 10 10) (* 7 6) (+ 10 (/ 10 5)))";
+	var input2 = "(if (<= 100 10) (+ 10 10) (- 20 (/ 10 5)))"
+
+	console.log("Input: " + input1);
+	console.log("Output: " + Lispify(input1));
+
+	console.log("=======================================================\n");
+
+	console.log("Input: " + input2);
+	console.log("Output: " + Lispify(input2));
+
+	console.log("=======================================================\n");
+}
+
+function interpretQuote() {
+
+	console.log("\n\t INTERPRETING QUOTE EXPRESSIONS \n");	
+
+	var input1 = "(quote (+ 1 2))";
+
+	console.log("Input: " + input1);
+	console.log("Output: " + JSON.stringify(Lispify(input1), null));
+
+	console.log("=======================================================\n");
+}
+
+
+function interpretLambda() {
+
+	console.log("\n\t INTERPRETING LAMBDA EXPRESSIONS \n");	
+
+	var input1 = "(define circle-area (lambda (r) (* pi (* r r))))";
+	var input2 = "(circle-area 3)";
+
+	console.log("Define : " + input1);
+	console.log("Procedure Call : " + input2);
+	Lispify(input1);
+	console.log("Output: " + Lispify(input2));
+
+	console.log("=======================================================\n");
+
+}

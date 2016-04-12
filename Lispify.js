@@ -69,8 +69,8 @@ var globalVar = {
 };
 
 var global_env = {
-
-	'*': function(args) { return args.reduce(function(result, currVal)			{ return result * currVal}, 1); },
+	'*': function(args) { return args[0] * args[1]; },
+	// '*': function(args) { return args.reduce(function(result, currVal)			{ return result * currVal}, 1); },
 	'+': function(args) { return args.reduce(function(result, currVal)			{ return result + currVal}, 0); },
 	'-': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal - result}, 0); },
 	'/': function(args) { return args.reverse().reduce(function(result, currVal){ return currVal / result}, 1); },
@@ -79,6 +79,7 @@ var global_env = {
 	'>=':function(args) { return (args[0] >=  args[1]); }, 
 	'<=':function(args) { return (args[0] <=  args[1]); },
 	'=': function(args) { return (args[0] === args[1]); },
+	'pi': Math.PI,
 };
 
 
@@ -717,10 +718,10 @@ function Parse(input) {
 	}
 }
 
-
 // Evaluates each expression
 function Evaluate(currVal, env) {
 
+	// Default - global scope set as current environment
 	env = (typeof env !== 'undefined') ? env : global_env;
 
 	// Number literal
@@ -750,7 +751,31 @@ function Evaluate(currVal, env) {
 
 	// (lambda (var..) exp)
 	else if(currVal[0] === 'lambda') {
-		
+		// Create new local scope
+		var new_local_env = Object.create(env);
+		return function(args) { 
+			var params = currVal[1]; 
+			var body = currVal[2];	
+			// new local scope
+			var env = new_local_env;
+
+			// Map params to args and update it in the local scope			
+			try {
+				if(args.length !== params.length)
+					throw new Error("Expected " + params.length + " arguments but received " + arguments.length);	
+				
+				// Mapping formal arguments to actual arguments and updating it in the new local scope
+				for(var i=0, j=0; i < args.length; i++, j++) 
+					env[params[j]] = args[i];
+
+				// Call Evaluate function with the new local scope
+				return Evaluate(body, env);
+
+			}
+			catch(e) {
+				console.log(e.message);
+			}
+		};
 	}
 
 	// (proc args...)
@@ -763,7 +788,6 @@ function Evaluate(currVal, env) {
 		return proc(args);
 	}
 }
-
 
 //Lisp(Scheme) interpreter
 function Lispify(program){
@@ -784,5 +808,6 @@ module.exports = {
 	globalVar: globalVar,
 	Parse: Parse,
 	Evaluate:Evaluate,
-	Lispify: Lispify
+	Lispify: Lispify,
 }
+
