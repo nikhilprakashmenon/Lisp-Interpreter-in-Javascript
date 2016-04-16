@@ -1,9 +1,17 @@
 var repl = require('repl');
 
+// App specific module
+var lispInterpreter = require('./Lispify');
+
+var context   = lispInterpreter.context;
+var Parse     = lispInterpreter.Parse;
+var Evaluate  = lispInterpreter.Evaluate;
+var Lispify   = lispInterpreter.Lispify;
+
 // Default evaluator for Lisp expressions
 var defaultEvaluator = function(cmd, context, filename, callback) {
-	var result = Lispify(String(cmd));
-	callback(null, result);
+	var result = Lispify.call(context, String(cmd));
+	callback(null, result || "No Specific Output");
 };
 
 // Start REPL server with the given prompt
@@ -11,13 +19,6 @@ var replServer = repl.start({
 	prompt: "lispify > ",
 	eval: defaultEvaluator
 });
-
-// App specific module
-var lispInterpreter = require('./Lispify');
-
-var Parse     = lispInterpreter.Parse;
-var Evaluate  = lispInterpreter.Evaluate;
-var Lispify   = lispInterpreter.Lispify;
 
 // Attaching module to REPL context
 replServer.context.Parse    = Parse;

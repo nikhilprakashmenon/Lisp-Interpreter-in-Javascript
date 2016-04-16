@@ -1,4 +1,4 @@
-var lispInterpreter = require('./Lispify_Module_Pattern');
+var lispInterpreter = require('./Lispify');
 
 var globalVar = lispInterpreter.globalVar;
 var Parse     = lispInterpreter.Parse;
@@ -24,10 +24,10 @@ var context   = lispInterpreter.context;
 ==============================================================================================================
 */
 
-// interpretArithmetic();
-// interpretDefine();
-// interpretIf();
-// interpretQuote();
+interpretArithmetic();
+interpretDefine();
+interpretIf();
+interpretQuote();
 interpretLambda();
 
 /*
@@ -342,5 +342,53 @@ function interpretLambda() {
 	console.log("Output: " + Lispify.call(context, input2));
 
 	console.log("=======================================================\n");
+
+	var input3 = "(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))";
+	var input4 = "(fact 10)";
+	var input5 = "(circle-area (fact 10))";
+
+	console.log("Define : " + input3);
+	console.log("Procedure Call : " + input4);
+	Lispify.call(context, input3);
+	console.log("Output: " + Lispify.call(context, input4));
+
+	console.log("\nProcedure Call : " + input5);
+	console.log("Output: " + Lispify.call(context, input5));	
+
+	console.log("=======================================================\n");
+
+	var input6 = "(define twice (lambda (x) (* 2 x)))";
+	var input7 = "(twice 5)";
+
+	console.log("Define : " + input6);
+	console.log("Procedure Call : " + input7);
+	Lispify.call(context, input6);	
+	console.log("Output: " + Lispify.call(context, input7));
+
+	console.log("=======================================================\n");
+
+	var input8 = "(define repeat (lambda (f) (lambda (x) (f (f x)))))";
+	var input9 = "((repeat twice) 10)";
+
+	console.log("Define : " + input8);
+	console.log("Procedure Call : " + input9);
+	Lispify.call(context, input8);	
+	console.log("Output: " + Lispify.call(context, input9));
+
+	var input10 = "((repeat (repeat twice)) 10)";
+
+	console.log("\nProcedure Call : " + input10);
+	console.log("Output: " + Lispify.call(context, input10));	
+
+
+	var input6 = "(define twice (lambda (x) (* 2 x)))";
+	var input8 = "(define repeat (lambda (f) (lambda (x) (f (f x)))))";
+	var input10 = "((repeat (repeat twice)) 10)";
+
+	Lispify.call(context, input6);
+	Lispify.call(context, input8);
+
+	// console.log("\nProcedure Call : " + input10);
+	console.log("Output: " + Lispify.call(context, input10));
 
 }
