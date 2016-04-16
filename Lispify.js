@@ -4,11 +4,9 @@
 ==============================================================================================================
 */
 
-
-
-var Lispify_Module = (function(window, undefined) {
-
-	var lispInterpreter = {};
+var Lispy = (function(window, undefined) {
+	
+	var apis = {};
 
 /*
 ==============================================================================================================
@@ -16,10 +14,10 @@ var Lispify_Module = (function(window, undefined) {
 ==============================================================================================================
 */
 	var _global_env = {
-		'*': function(args) { return  args[0]  *  args[1];  },
-		'+': function(args) { return  args[0]  +  args[1];  },
-		'-': function(args) { return  args[0]  -  args[1];  },
-		'/': function(args) { return  args[0]  /  args[1];  },
+		'*': function(args) { return  args[0]  *  args[1] ; },
+		'+': function(args) { return  args[0]  +  args[1] ; },
+		'-': function(args) { return  args[0]  -  args[1] ; },
+		'/': function(args) { return  args[0]  /  args[1] ; },
 		'>': function(args) { return (args[0]  >  args[1]); }, 
 		'<': function(args) { return (args[0]  <  args[1]); }, 
 		'>=':function(args) { return (args[0] >=  args[1]); }, 
@@ -30,17 +28,15 @@ var Lispify_Module = (function(window, undefined) {
 
 	//Error Handling function
 	var _errorHandler = function(errorMessage){
-		lispInterpreter.globalVar.errorFlag = true;
-		console.log("Invalid Syntax. Error: " + errorMessage);
+		apis.globalVar.errorFlag = true;
+		console.log("SyntaxError: " + errorMessage);
 	}
-
 
 	//Function for debugging purpose
 	var _debuggy = function(string){
-		if(lispInterpreter.globalVar.debugFlag)
+		if(apis.globalVar.debugFlag)
 			console.log(string);
 	}
-
 
 /*
 ==============================================================================================================
@@ -49,17 +45,17 @@ var Lispify_Module = (function(window, undefined) {
 */
 
 	// Global object for debugging and error handling 
-	lispInterpreter.globalVar = {  debugFlag : false, errorFlag : false	};
+	apis.globalVar = { debugFlag : false, errorFlag : false	};
 
 	// Lisp Parser
-	lispInterpreter.Parse = function(input) {
+	apis.Parse = function(input) {
 
 		// Initializations 
 		var index = -1;
 		var parseTree = [];
 		var programParseTree = [];
 		var ch;
-		Lispify_Module.globalVar.errorFlag = false;
+		apis.globalVar.errorFlag = false;
 
 		
 		// Function 'next' moves the pointer to the next non-space char
@@ -71,7 +67,7 @@ var Lispify_Module = (function(window, undefined) {
 				parseE();								
 				ch = next();
 
-				if(same(')' , ch) && !Lispify_Module.globalVar.errorFlag){
+				if(same(')' , ch) && !Lispy.globalVar.errorFlag){
 					// Checking whether the input is a whole program
 					ch = next();						
 					if(ch != '('){
@@ -175,7 +171,7 @@ var Lispify_Module = (function(window, undefined) {
 							}
 						}
 						else
-							_errorHandler("Invalid 'define' body syntax");
+							_errorHandler("SyntaxError: within 'define' body");
 					}
 				}
 			}
@@ -188,7 +184,7 @@ var Lispify_Module = (function(window, undefined) {
 
 					// Checking the syntax of test condition
 					var testParseResult = parseTestCondForIf(); 
-					if(!Lispify_Module.globalVar.errorFlag){
+					if(!Lispy.globalVar.errorFlag){
 						// Pushing the parsed test condition to parse tree
 						parseTree.push(testParseResult);		
 
@@ -209,7 +205,7 @@ var Lispify_Module = (function(window, undefined) {
 					// Checking the syntax of test condition
 					var testParseResult = parseTestCondForIf(); 
 
-					if(!Lispify_Module.globalVar.errorFlag){
+					if(!Lispy.globalVar.errorFlag){
 						// Pushing the parsed test condition to parse tree
 						localTree.push(testParseResult);		
 
@@ -404,7 +400,7 @@ var Lispify_Module = (function(window, undefined) {
 
 				})();
 
-				if(!Lispify_Module.globalVar.errorFlag){
+				if(!Lispy.globalVar.errorFlag){
 					// If the lambda argument syntax is valid check the definition										
 					_debuggy("Valid lambda parameters");
 
@@ -466,7 +462,7 @@ var Lispify_Module = (function(window, undefined) {
 					ch = next();
 					var parsedExp = parseExpression();
 					//	if the expression syntax is valid
-					if(!Lispify_Module.globalVar.errorFlag){									
+					if(!Lispy.globalVar.errorFlag){									
 						ch = next();
 						if(same(')' , ch))
 							return parsedExp;
@@ -475,7 +471,7 @@ var Lispify_Module = (function(window, undefined) {
 					}
 				}
 							
-				else if(operationSelector(ch) == "operator" && !Lispify_Module.globalVar.errorFlag){
+				else if(operationSelector(ch) == "operator" && !Lispy.globalVar.errorFlag){
 					// An expression begins with an binary oper (+ , - , * , /)	
 					var tree = [];
 					// Pushing the operator first
@@ -677,7 +673,7 @@ var Lispify_Module = (function(window, undefined) {
 	}
 
 	// Lisp Evaluator
-	lispInterpreter.Evaluate = function(currVal, env) {
+	apis.Evaluate = function(currVal, env) {
 
 		// Default - global scope set as current environment
 		env = (typeof env !== 'undefined') ? env : _global_env;
@@ -728,7 +724,7 @@ var Lispify_Module = (function(window, undefined) {
 						env[params[j]] = args[i];
 
 					// Call Evaluate function with the new local scope
-					return Lispify_Module.Evaluate(body, env);
+					return Lispy.Evaluate(body, env);
 
 				}
 				catch(e) {
@@ -749,7 +745,7 @@ var Lispify_Module = (function(window, undefined) {
 	}
 
 	//Lisp(Scheme) interpreter	
-	lispInterpreter.Lispify = function(program) {
+	apis.Lispify = function(program) {
 
 		var ast = this.Parse(program);
 		var output = this.Evaluate(ast);
@@ -757,7 +753,7 @@ var Lispify_Module = (function(window, undefined) {
 		return output;
 	}
 
-	return lispInterpreter;
+	return apis;
 
 })(this);
 
@@ -768,9 +764,9 @@ var Lispify_Module = (function(window, undefined) {
 */
 
 module.exports = {
-	context: 	Lispify_Module,
-	globalVar:  Lispify_Module.globalVar,
-	Parse: 		Lispify_Module.Parse,
-	Evaluate:   Lispify_Module.Evaluate,
-	Lispify: 	Lispify_Module.Lispify,
+	context: 	Lispy,
+	globalVar:  Lispy.globalVar,
+	Parse: 		Lispy.Parse,
+	Evaluate:   Lispy.Evaluate,
+	Lispify: 	Lispy.Lispify,
 }

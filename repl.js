@@ -11,7 +11,7 @@ var Lispify   = lispInterpreter.Lispify;
 // Default evaluator for Lisp expressions
 var defaultEvaluator = function(cmd, context, filename, callback) {
 	var result = Lispify.call(context, String(cmd));
-	callback(null, result || "No Specific Output");
+	callback(null, result || "No Output");
 };
 
 // Start REPL server with the given prompt
