@@ -38,10 +38,7 @@ replServer.defineCommand('about', {
 replServer.defineCommand('commands', {
 	help: 'Available Commands',
 	action: function() {
-		console.log('\n\t1. Lispify()    - interprets a lisp statement');
-		console.log('\n\t2. Parse()      - parses a lisp statement');
-		console.log('\n\t3. Evaluate()   - evaluates a lisp ast (abstract syntax tree)');
-		console.log('\n\t4. Default      - uses Lispify() to interpret the entered expression\n');
+		console.log('\n\tDefault  - uses Lispify() to interpret the entered expression\n');
 		this.displayPrompt();
 	}
 });

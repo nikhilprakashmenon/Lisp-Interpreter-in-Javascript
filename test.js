@@ -6,6 +6,8 @@ var Evaluate  = lispInterpreter.Evaluate;
 var Lispify   = lispInterpreter.Lispify;
 var context   = lispInterpreter.context;
 
+
+
 testParser();
 testInterpreter();
 
@@ -348,11 +350,14 @@ function testInterpreter() {
 
 		console.log("=======================================================\n");
 
+		var input6 = "(define twice (lambda (x) (* 2 x)))";
 		var input8 = "(define repeat (lambda (f) (lambda (x) (f (f x)))))";
 		var input9 = "((repeat twice) 10)";
 
+		console.log("Define: " + input6)
 		console.log("Define : " + input8);
-		console.log("Procedure Call : " + input9);
+		console.log("\nProcedure Call : " + input9);
+		Lispify.call(context, input6);
 		Lispify.call(context, input8);	
 		console.log("Output: " + Lispify.call(context, input9));
 
@@ -360,16 +365,5 @@ function testInterpreter() {
 
 		console.log("\nProcedure Call : " + input10);
 		console.log("Output: " + Lispify.call(context, input10));	
-
-
-		var input6 = "(define twice (lambda (x) (* 2 x)))";
-		var input8 = "(define repeat (lambda (f) (lambda (x) (f (f x)))))";
-		var input10 = "((repeat (repeat twice)) 10)";
-
-		Lispify.call(context, input6);
-		Lispify.call(context, input8);
-
-		// console.log("\nProcedure Call : " + input10);
-		console.log("Output: " + Lispify.call(context, input10));
 	})();
 }
