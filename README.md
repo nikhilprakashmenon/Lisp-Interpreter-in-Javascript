@@ -62,7 +62,7 @@ Two step interpreter:-
   	              | <NUMBER>
 ```
 
->To test: $ nodejs test.js <br><br>
+>To test: $ nodejs test.js <br>
 >To start a repl: $ nodejs repl.js
 
 Reference: [How to Write a (Lisp) Interpreter (in Python)) - By Peter Norvig](http://norvig.com/lispy.html)
